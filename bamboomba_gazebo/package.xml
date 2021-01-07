@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>bamboomba_gazebo</name>
+  <version>0.1.0</version>
+  <description>Launchfiles to use Bamboomba in Gazebo.</description>
+
+  <maintainer email="kevin.demarco@gmail.com">Kevin DeMarco</maintainer>
+  <author>Kevin DeMarco</author>
+
+  <license>BSD</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <exec_depend>gazebo_plugins</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo_ros_control</exec_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+    <gazebo_ros gazebo_media_path="${prefix}"/>
+  </export>
+</package>
