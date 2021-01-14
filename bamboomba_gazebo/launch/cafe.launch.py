@@ -21,8 +21,7 @@ from pathlib import Path
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import ExecuteProcess, SetEnvironmentVariable
-from launch.actions import IncludeLaunchDescription
+from launch.actions import ExecuteProcess, SetEnvironmentVariable, DeclareLaunchArgument, IncludeLaunchDescription
 from launch_ros.actions import Node
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, Command, EnvironmentVariable, PathJoinSubstitution
@@ -45,9 +44,10 @@ def generate_launch_description():
     create_description_path = str(Path(get_package_share_directory('create_description')).parent.absolute())
 
     return LaunchDescription([
-        ExecuteProcess(
-            cmd=['ros2', 'param', 'set', '/gazebo', 'use_sim_time', use_sim_time],
-            output='screen'),
+        DeclareLaunchArgument(
+            'use_sim_time',
+            default_value='false',
+            description='Use simulation (Gazebo) clock if true'),
 
         SetEnvironmentVariable(name='GAZEBO_MODEL_PATH', value=[EnvironmentVariable('GAZEBO_MODEL_PATH'), os.pathsep, create_description_path]),
 
@@ -68,13 +68,15 @@ def generate_launch_description():
              executable='spawn_entity.py',
              arguments=['-entity', 'bamboomba',
                         '-topic', 'robot_description',
-                        '-package_to_model'],
+                        '-package_to_model',
+                        '-z 0.1'],
              output='screen'),
 
         Node(package='robot_state_publisher',
              name='robot_state_publisher',
              executable='robot_state_publisher',
              output='screen',
-             parameters=[robot_description]
+             parameters=[robot_description,
+                         {'use_sim_time': use_sim_time}]
         ),
     ])
